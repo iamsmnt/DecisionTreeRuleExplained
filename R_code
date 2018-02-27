@@ -1,1 +1,25 @@
 
+#load data into R
+data = read.csv("churn_data.csv", header = T)
+
+#divide the data into train and test
+train = data[sample(nrow(data), 4800, replace = F), ] 
+#Sample Random Sampling, Replace means removing the redundant variables for 
+##iteration ##More training observation more accurate predictions more variances
+
+test = data[!(1:nrow(data)) %in% as.numeric(row.names(train)), ]
+# search opreator (%in%), leaves the observations that are present in train 
+#dataset  
+
+
+#Decision tree using C50 for classification
+#cannot used for regression
+library(C50)
+ruleModel = C5.0(churn ~ ., data = train,rules = TRUE)
+#churn is an independent variable
+#. means selecting all the variables
+summary(ruleModel)
+
+#predict using test data
+test_pred = predict(ruleModel, test[,-20], type = "class")
+#type = "class"
